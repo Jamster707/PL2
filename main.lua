@@ -1,13 +1,10 @@
-if not syn or not protectgui then
-    getgenv().protectgui = function()end
-end
-local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/Jamster707/PL2/main/EspLib.lua'),true))()
-local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/Jamster707/PL2/main/UiLib'))()
-Library:SetWatermark("By Jammsterr707")
-Library:Notify('Press Right-CTRL To Toggle The UI')
-Library:Notify('')
-espLib:Load()
 
+local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/Jamster707/PL2/main/UiLib'))()
+local ThemeManager = loadstring(game:HttpGet('https://raw.githubusercontent.com/Jamster707/PL2/main/ThemeManager.lua'))()
+local SaveManager = loadstring(game:HttpGet('https://raw.githubusercontent.com/Jamster707/PL2/main/SaveManager.lua'))()
+local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/Jamster707/PL2/main/EspLib.lua'),true))()
+espLib:Load()
+--silent aim
 local Camera = workspace.CurrentCamera
 local Players = game:GetService("Players")
 local GuiService = game:GetService("GuiService")
@@ -95,33 +92,33 @@ local function getClosestPlayer()
     return Closest
 end
 
-local Window = Library:CreateWindow("V0.0.1")
+local Window = Library:CreateWindow({
+    -- Set Center to true if you want the menu to appear in the center
+    -- Set AutoShow to true if you want the menu to appear when it is created
+    -- Position and Size are also valid options here
+    -- but you do not need to define them unless you are changing them :)
 
-local GeneralTab = Window:AddTab("Aim")
-local VisTab = Window:AddTab("Visuals")
-local VisBOX = VisTab:AddLeftTabbox("General")
-local Vismain =VisBOX:AddTab("Global")
-Vismain:AddToggle("VisEnabled", {Text = "Enabled"}):OnChanged(function()
-    espLib.options.enabled = Toggles.VisEnabled.Value
-end)
-Vismain:AddToggle("VisTeamColor", {Text = "Team Color"}):OnChanged(function()
-    espLib.options.teamColor = Toggles.VisTeamColor.Value
-end)
-Vismain:AddToggle("VisTeamCheck", {Text = "Team Check"}):OnChanged(function()
-    espLib.options.teamCheck = Toggles.VisTeamCheck.Value
-end)
-Vismain:AddToggle("VisVisibleCheck", {Text = "Visible Check"}):OnChanged(function()
-    espLib.options.visibleOnly = Toggles.VisVisibleCheck.Value
-end)
-Vismain:AddToggle("VisLimitDisctance", {Text = "Limit Distance"}):OnChanged(function()
-    espLib.options.limitDistance = Toggles.VisLimitDisctance.Value
-end)
-local VisBOX3 = VisTab:AddLeftTabbox("VISBOX3")
-local VisChams =VisBOX3:AddTab("Chams")
+    Title = 'V0.0.0.1',
+    Center = true, 
+    AutoShow = true,
+})
+-- You do not have to set your tabs & groups up this way, just a prefrence.
+local Tabs = {
+    -- Creates a new tab titled Main
+    Main = Window:AddTab('Main'), 
+    Aim = Window:AddTab('Aimbot'),
+    Visuals = Window:AddTab('Visuals'),
+    ['UI Settings'] = Window:AddTab('UI Settings')
+}
+
+local visglobalbox = Tabs.Visuals:AddLeftGroupbox('Global')
+local VisChams = Tabs.Visuals:AddLeftGroupbox('Chams')
+local visespbox = Tabs.Visuals:AddRightGroupbox('ESP')
 VisChams:AddToggle("ChamsEnabled", {Text = "Chams"}):AddColorPicker("ChamColorFill", {Default = Color3.fromRGB(1, 0, 0)}):OnChanged(function()
     espLib.options.chams = Toggles.ChamsEnabled.Value
     while Toggles.ChamsEnabled.Value do
         espLib.options.chamsFillColor = Options.ChamColorFill.Value
+        espLib.options.chamsOutlineColor = Options.ChamColorFill.Value
         task.wait()
     end
 end)
@@ -131,105 +128,110 @@ end)
 VisChams:AddSlider("ChamsOutTrans", {Text = "Chams Outline Transparency", Min = 0, Max = 1, Default = 0, Rounding = 2}):OnChanged(function()
     espLib.options.chamsOutlineTransparency = Options.ChamsOutTrans.Value
 end)
+visglobalbox:AddToggle("VisEnabled", {Text = "Enabled"}):OnChanged(function()
+    espLib.options.enabled = Toggles.VisEnabled.Value
+end)
+visglobalbox:AddToggle("VisTeamColor", {Text = "Team Color"}):OnChanged(function()
+    espLib.options.teamColor = Toggles.VisTeamColor.Value
+end)
+visglobalbox:AddToggle("VisTeamCheck", {Text = "Team Check"}):OnChanged(function()
+    espLib.options.teamCheck = Toggles.VisTeamCheck.Value
+end)
+visglobalbox:AddToggle("VisVisibleCheck", {Text = "Visible Check"}):OnChanged(function()
+    espLib.options.visibleOnly = Toggles.VisVisibleCheck.Value
+end)
+visglobalbox:AddToggle("VisLimitDisctance", {Text = "Limit Distance"}):OnChanged(function()
+    espLib.options.limitDistance = Toggles.VisLimitDisctance.Value
+end)
 
-local VisBOX2 = VisTab:AddRightTabbox("ESP")
-local VisESP =VisBOX2:AddTab("ESP")
-VisESP:AddToggle("Visboxes", {Text = "Boxes"}):AddColorPicker("BoxColor", {Default = Color3.fromRGB(1, 0, 0)}):OnChanged(function()
+visespbox:AddToggle("Visboxes", {Text = "Boxes"}):AddColorPicker("BoxColor", {Default = Color3.fromRGB(1, 0, 0)}):OnChanged(function()
     espLib.options.boxes = Toggles.Visboxes.Value 
     while Toggles.Visboxes.Value do
     espLib.options.boxesColor = Options.BoxColor.Value
     task.wait()
     end
 end)
-VisESP:AddSlider("BoxTrans", {Text = "Boxes Transparency", Min = 0, Max = 1, Default = 1, Rounding = 2}):OnChanged(function()
+visespbox:AddSlider("BoxTrans", {Text = "Boxes Transparency", Min = 0, Max = 1, Default = 1, Rounding = 2}):OnChanged(function()
     espLib.options.boxesTransparency = Options.BoxTrans.Value
 end)
-VisESP:AddToggle("Visboxesfill", {Text = "Boxes Fill"}):AddColorPicker("BoxColorFill", {Default = Color3.fromRGB(1, 0, 0)}):OnChanged(function()
+visespbox:AddToggle("Visboxesfill", {Text = "Boxes Fill"}):AddColorPicker("BoxColorFill", {Default = Color3.fromRGB(1, 0, 0)}):OnChanged(function()
     espLib.options.boxFill = Toggles.Visboxesfill.Value 
     while Toggles.Visboxesfill.Value do
     espLib.options.boxFillColor = Options.BoxColorFill.Value
     task.wait()
     end
 end)
-VisESP:AddSlider("BoxFillTrans", {Text = "Boxes Fill Transparency", Min = 0, Max = 1, Default = 0.5, Rounding = 2}):OnChanged(function()
+visespbox:AddSlider("BoxFillTrans", {Text = "Boxes Fill Transparency", Min = 0, Max = 1, Default = 0.5, Rounding = 2}):OnChanged(function()
     espLib.options.boxFillTransparency = Options.BoxFillTrans.Value
 end)
-VisESP:AddToggle("VisHealthBars", {Text = "Health Bars"}):AddColorPicker("HealthBarcolor", {Default = Color3.fromRGB(0, 255, 0)}):OnChanged(function()
+visespbox:AddToggle("VisHealthBars", {Text = "Health Bars"}):AddColorPicker("HealthBarcolor", {Default = Color3.fromRGB(0, 255, 0)}):OnChanged(function()
     espLib.options.healthBars = Toggles.VisHealthBars.Value 
     while Toggles.VisHealthBars.Value do
     espLib.options.healthBarsColor = Options.HealthBarcolor.Value
     task.wait()
     end
 end)
-VisESP:AddToggle("VisNames", {Text = "Names"}):AddColorPicker("NameColor", {Default = Color3.fromRGB(255, 255, 255)}):OnChanged(function()
+visespbox:AddToggle("VisNames", {Text = "Names"}):AddColorPicker("NameColor", {Default = Color3.fromRGB(255, 255, 255)}):OnChanged(function()
     espLib.options.names = Toggles.VisNames.Value 
     while Toggles.VisNames.Value do
     espLib.options.nameColor = Options.NameColor.Value
     task.wait()
     end
 end)
-VisESP:AddSlider("nameTrans", {Text = "Names Transparency", Min = 0, Max = 1, Default = 1, Rounding = 2}):OnChanged(function()
+visespbox:AddSlider("nameTrans", {Text = "Names Transparency", Min = 0, Max = 1, Default = 1, Rounding = 2}):OnChanged(function()
     espLib.options.nameTransparency = Options.nameTrans.Value
 end)
-VisESP:AddToggle("VisHPTXT", {Text = "Health Text"}):AddColorPicker("HPTXTColor", {Default = Color3.fromRGB(255, 255, 255)}):OnChanged(function()
+visespbox:AddToggle("VisHPTXT", {Text = "Health Text"}):AddColorPicker("HPTXTColor", {Default = Color3.fromRGB(255, 255, 255)}):OnChanged(function()
     espLib.options.healthText = Toggles.VisHPTXT.Value 
     while Toggles.VisHPTXT.Value do
     espLib.options.healthTextColor = Options.HPTXTColor.Value
     task.wait()
     end
 end)
-VisESP:AddSlider("HPTXTTrans", {Text = "Health Text Transparency", Min = 0, Max = 1, Default = 1, Rounding = 2}):OnChanged(function()
+visespbox:AddSlider("HPTXTTrans", {Text = "Health Text Transparency", Min = 0, Max = 1, Default = 1, Rounding = 2}):OnChanged(function()
     espLib.options.healthTextTransparency = Options.HPTXTTrans.Value
 end)
-VisESP:AddToggle("VisDistance", {Text = "Distance Text"}):AddColorPicker("VisDistanceColor", {Default = Color3.fromRGB(255, 255, 255)}):OnChanged(function()
+visespbox:AddToggle("VisDistance", {Text = "Distance Text"}):AddColorPicker("VisDistanceColor", {Default = Color3.fromRGB(255, 255, 255)}):OnChanged(function()
     espLib.options.distance = Toggles.VisDistance.Value 
     while Toggles.VisDistance.Value do
     espLib.options.distanceColor = Options.VisDistanceColor.Value
     task.wait()
     end
 end)
-VisESP:AddSlider("DistanceTextTrans", {Text = "Distance Text Transparency", Min = 0, Max = 1, Default = 1, Rounding = 2}):OnChanged(function()
+visespbox:AddSlider("DistanceTextTrans", {Text = "Distance Text Transparency", Min = 0, Max = 1, Default = 1, Rounding = 2}):OnChanged(function()
     espLib.options.distanceTransparency = Options.DistanceTextTrans.Value
 end)
-VisESP:AddToggle("VisTracers", {Text = "Tracers"}):AddColorPicker("VisTracercolor", {Default = Color3.fromRGB(1, 0, 0)}):OnChanged(function()
+visespbox:AddToggle("VisTracers", {Text = "Tracers"}):AddColorPicker("VisTracercolor", {Default = Color3.fromRGB(1, 0, 0)}):OnChanged(function()
     espLib.options.tracers = Toggles.VisTracers.Value 
     while Toggles.VisTracers.Value do
     espLib.options.tracerColor = Options.VisTracercolor.Value
     task.wait()
     end
 end)
-VisESP:AddDropdown("TracerOrigin", {Text = "Tracer Origin", Default = 1, Values = {
+visespbox:AddDropdown("TracerOrigin", {Text = "Tracer Origin", Default = 1, Values = {
     "Bottom",
     "Mouse",
     "Top"
 }}):OnChanged(function()
     espLib.options.tracerOrigin = Options.TracerOrigin.Value
 end)
-VisESP:AddSlider("TracerTrans", {Text = "Tracers Transparency", Min = 0, Max = 1, Default = 1, Rounding = 2}):OnChanged(function()
+visespbox:AddSlider("TracerTrans", {Text = "Tracers Transparency", Min = 0, Max = 1, Default = 1, Rounding = 2}):OnChanged(function()
     espLib.options.tracerTransparency = Options.TracerTrans.Value
 end)
-
-
-
-
-
-local MainBOX = GeneralTab:AddLeftTabbox("Silent Aim")
-do
-    local Main = MainBOX:AddTab("Main")
-    Main:AddToggle("aim_Enabled", {Text = "Enabled"})
-    Main:AddToggle("TeamCheck", {Text = "Team Check"})
-    Main:AddToggle("VisibleCheck", {Text = "Visible Check"})
-    Main:AddDropdown("TargetPart", {Text = "Target Part", Default = 1, Values = {
+local SAbox = Tabs.Aim:AddLeftGroupbox('Sient Aim')
+local SAFOVBox = Tabs.Aim:AddLeftGroupbox('FOV')
+    SAbox:AddToggle("aim_Enabled", {Text = "Enabled"})
+    SAbox:AddToggle("TeamCheck", {Text = "Team Check"})
+    SAbox:AddToggle("VisibleCheck", {Text = "Visible Check"})
+    SAbox:AddDropdown("TargetPart", {Text = "Target Part", Default = 1, Values = {
         "Head", "HumanoidRootPart"
     }})
-    Main:AddDropdown("Method", {Text = "Silent Aim Method", Default = 1, Values = {
+    SAbox:AddDropdown("Method", {Text = "Silent Aim Method", Default = 1, Values = {
         "Raycast","FindPartOnRay",
         "FindPartOnRayWithWhitelist",
         "FindPartOnRayWithIgnoreList",
         "Mouse.Hit/Target"
     }})
-end
-local FieldOfViewBOX = GeneralTab:AddLeftTabbox("Silent Aim FOV")
 do
     local fov_circle = Drawing.new("Circle")
     fov_circle.Thickness = 1
@@ -253,12 +255,11 @@ do
         mouse_box.Position = Vector2.new(Mouse.X, Mouse.Y + GuiInset(GuiService).Y)
     end]]
 
-    local Main = FieldOfViewBOX:AddTab("Field Of View")
-    Main:AddToggle("fov_Enabled", {Text = "Enabled"})
-    Main:AddSlider("Radius", {Text = "Radius", Min = 0, Max = 360, Default = 180, Rounding = 0}):OnChanged(function()
+    SAFOVBox:AddToggle("fov_Enabled", {Text = "Enabled"})
+    SAFOVBox:AddSlider("Radius", {Text = "Radius", Min = 0, Max = 360, Default = 180, Rounding = 0}):OnChanged(function()
         fov_circle.Radius = Options.Radius.Value
     end)
-    Main:AddToggle("Visible", {Text = "Visible"}):AddColorPicker("Color", {Default = Color3.fromRGB(54, 57, 241)}):OnChanged(function()
+    SAFOVBox:AddToggle("Visible", {Text = "Visible"}):AddColorPicker("Color", {Default = Color3.fromRGB(54, 57, 241)}):OnChanged(function()
         fov_circle.Visible = Toggles.Visible.Value
         while Toggles.Visible.Value do
             fov_circle.Visible = Toggles.Visible.Value
@@ -267,7 +268,7 @@ do
             task.wait()
         end
     end)
-    Main:AddToggle("MousePosition", {Text = "Show Fake Mouse Position"}):AddColorPicker("MouseVisualizeColor", {Default = Color3.fromRGB(54, 57, 241)}):OnChanged(function()
+    SAFOVBox:AddToggle("MousePosition", {Text = "Show Fake Mouse Position"}):AddColorPicker("MouseVisualizeColor", {Default = Color3.fromRGB(54, 57, 241)}):OnChanged(function()
         mouse_box.Visible = Toggles.MousePosition.Value 
         while Toggles.MousePosition.Value do 
             if Toggles.aim_Enabled.Value == true and Options.Method.Value == "Mouse.Hit/Target" then
@@ -281,7 +282,6 @@ do
         end
     end)
 end
-
 local ExpectedArguments = {
     FindPartOnRayWithIgnoreList = {
         ArgCountRequired = 3,
@@ -385,4 +385,233 @@ oldIndex = hookmetamethod(game, "__index", function(self, Index)
     return oldIndex(self, Index)
 end)
 
-    
+local LeftGroupBox = Tabs.Main:AddLeftGroupbox('Groupbox')
+
+-- Tabboxes are a tiny bit different, but here's a basic example:
+--[[
+
+local TabBox = Tabs.Main:AddLeftTabbox() -- Add Tabbox on left side
+
+local Tab1 = TabBox:AddTab('Tab 1')
+local Tab2 = TabBox:AddTab('Tab 2')
+
+-- You can now call AddToggle, etc on the tabs you added to the Tabbox
+]]
+
+
+LeftGroupBox:AddToggle('MyToggle', {
+    Text = 'This is a toggle',
+    Default = true, 
+    Tooltip = 'This is a tooltip', 
+})
+
+
+
+Toggles.MyToggle:OnChanged(function()
+
+    print('MyToggle changed to:', Toggles.MyToggle.Value)
+end)
+
+
+Toggles.MyToggle:SetValue(false)
+
+
+
+local MyButton = LeftGroupBox:AddButton('Button', function()
+    print('You clicked a button!')
+end)
+
+
+
+local MyButton2 = MyButton:AddButton('Sub button', function()
+    print('You clicked a sub button!')
+end)
+
+
+
+MyButton:AddTooltip('This is a button')
+MyButton2:AddTooltip('This is a sub button')
+
+-- NOTE:button change method 
+--[[
+    EXAMPLE: 
+
+    LeftGroupBox:AddButton('Kill all', Functions.KillAll):AddTooltip('This will kill everyone in the game!')
+        :AddButton('Kick all', Functions.KickAll):AddTooltip('This will kick everyone in the game!')
+]]
+
+
+LeftGroupBox:AddLabel('This is a label')
+LeftGroupBox:AddLabel('This is a label\n\nwhich wraps its text!', true)
+
+
+LeftGroupBox:AddDivider()
+
+
+LeftGroupBox:AddSlider('MySlider', {
+    Text = 'This is my slider!',
+
+
+
+    Default = 0,
+    Min = 0,
+    Max = 5,
+    Rounding = 1,
+
+    Compact = false, 
+})
+
+
+
+local Number = Options.MySlider.Value
+Options.MySlider:OnChanged(function()
+    print('MySlider was changed! New value:', Options.MySlider.Value)
+end)
+
+
+Options.MySlider:SetValue(3)
+
+
+LeftGroupBox:AddInput('MyTextbox', {
+    Default = 'My textbox!',
+    Numeric = false, 
+    Finished = false,
+
+    Text = 'This is a textbox',
+    Tooltip = 'This is a tooltip', 
+
+    Placeholder = 'Placeholder text',
+
+})
+
+Options.MyTextbox:OnChanged(function()
+    print('Text updated. New text:', Options.MyTextbox.Value)
+end)
+
+
+
+LeftGroupBox:AddDropdown('MyDropdown', {
+    Values = { 'This', 'is', 'a', 'dropdown' },
+    Default = 1,
+    Multi = false,
+
+    Text = 'A dropdown',
+    Tooltip = 'This is a tooltip',
+})
+
+Options.MyDropdown:OnChanged(function()
+    print('Dropdown got changed. New value:', Options.MyDropdown.Value)
+end)
+
+Options.MyDropdown:SetValue('This')
+
+
+LeftGroupBox:AddDropdown('MyMultiDropdown', {
+
+    Values = { 'This', 'is', 'a', 'dropdown' },
+    Default = 1, 
+    Multi = true,
+
+    Text = 'A dropdown',
+    Tooltip = 'This is a tooltip',
+})
+
+Options.MyMultiDropdown:OnChanged(function()
+    print('Multi dropdown got changed:')
+    for key, value in next, Options.MyMultiDropdown.Value do
+        print(key, value) 
+    end
+end)
+
+Options.MyMultiDropdown:SetValue({
+    This = true,
+    is = true,
+})
+
+
+
+LeftGroupBox:AddLabel('Color'):AddColorPicker('ColorPicker', {
+    Default = Color3.new(0, 1, 0),
+    Title = 'Some color', 
+})
+
+Options.ColorPicker:OnChanged(function()
+    print('Color changed!', Options.ColorPicker.Value)
+end)
+
+Options.ColorPicker:SetValueRGB(Color3.fromRGB(0, 255, 140))
+
+LeftGroupBox:AddLabel('Keybind'):AddKeyPicker('KeyPicker', {
+
+
+    Default = 'MB2', 
+    SyncToggleState = false, 
+
+
+   
+    Mode = 'Toggle', 
+
+    Text = 'Auto lockpick safes',
+    NoUI = false,
+})
+
+
+Options.KeyPicker:OnClick(function()
+    print('Keybind clicked!', Options.KeyPicker.Value)
+end)
+
+task.spawn(function()
+    while true do
+        wait(1)
+
+        -- example for checking if a keybind is being pressed
+        local state = Options.KeyPicker:GetState()
+        if state then
+            print('KeyPicker is being held down')
+        end
+
+        if Library.Unloaded then break end
+    end
+end)
+
+Options.KeyPicker:SetValue({ 'MB2', 'Toggle' })
+
+
+Library:SetWatermarkVisibility(true)
+
+-- Sets the watermark text
+Library:SetWatermark('Made By Jammsterr707')
+
+Library.KeybindFrame.Visible = true; 
+
+Library:OnUnload(function()
+    print('Unloaded!')
+    Library.Unloaded = true
+end)
+
+
+local MenuGroup = Tabs['UI Settings']:AddLeftGroupbox('Menu')
+
+MenuGroup:AddButton('Unload', function() Library:Unload() end)
+MenuGroup:AddLabel('Menu bind'):AddKeyPicker('MenuKeybind', { Default = 'End', NoUI = true, Text = 'Menu keybind' }) 
+
+Library.ToggleKeybind = Options.MenuKeybind -- Allows you to have a custom keybind for the menu
+
+ThemeManager:SetLibrary(Library)
+SaveManager:SetLibrary(Library)
+
+
+SaveManager:IgnoreThemeSettings() 
+
+SaveManager:SetIgnoreIndexes({ 'MenuKeybind' }) 
+
+
+ThemeManager:SetFolder('MyScriptHub')
+SaveManager:SetFolder('MyScriptHub/specific-game')
+
+
+SaveManager:BuildConfigSection(Tabs['UI Settings']) 
+
+
+ThemeManager:ApplyToTab(Tabs['UI Settings'])
+
