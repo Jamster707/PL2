@@ -247,20 +247,20 @@ function espLibrary.addEsp(player)
         top = create("Text", {
             Center = true,
             Size = 13,
-            Outline = false,
+            Outline = true,
             OutlineColor = color3New(),
             Font = 2,
         }),
         side = create("Text", {
             Size = 13,
-            Outline = false,
+            Outline = true,
             OutlineColor = color3New(),
             Font = 2,
         }),
         bottom = create("Text", {
             Center = true,
             Size = 13,
-            Outline = false,
+            Outline = true,
             OutlineColor = color3New(),
             Font = 2,
         }),
@@ -328,7 +328,7 @@ function espLibrary.addObject(object, options)
         text = create("Text", {
             Center = true,
             Size = 13,
-            Outline = false,
+            Outline = true,
             OutlineColor = color3New(),
             Font = 2,
         })
